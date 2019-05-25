@@ -22,19 +22,36 @@ Graph.prototype.getNode = function(actor) {
   return node;
 };
 
-//prints our search path
-Graph.prototype.drawTheTrace = function(result) {
-  var text = "";
-  //loops through all the nodes we have been through and adds it to a text
-  for (i = result.length - 1; i >= 0; i--) {
-    var node = result[i];
-    text += node.value;
-    if (!i == 0) {
-      text += "-->";
+//searches for a target node from a start node
+Graph.prototype.search = function(start, target) {
+  var currentNode;
+  start.searched = true;
+  //loops through all the edges of the current node searching for the target
+  for (var i = 0; i < start.edges.length; i++) {
+    currentNode = start.edges[i];
+    // if target is found add the last node as its parent and call the trace parents to draw the path from the start to the target node
+    if (currentNode.value == target.value) {
+      target.parent = start;
+      var next = target.parent;
+      var result = this.traceParents(target);
+      this.reset();
+      return;
+    } else {
+      //if the current node is not connected to the target we mark is as searched and add the current edge to search queue
+      if (!currentNode.searched) {
+        this.queue.push(currentNode);
+        currentNode.parent = start;
+      }
     }
   }
-  //a p5 function that draws a paragraph
-  createP(text);
+  //if we searched all the edges and not found any connection return null else search from the start of the queue
+  if (this.queue.length == 0) {
+    console.log("there is no connection");
+    this.reset();
+    return;
+  } else {
+    this.search(this.queue.shift(), target);
+  }
 };
 
 //if we found our target adds all the nodes we visited to reach our target to an array
@@ -48,36 +65,30 @@ Graph.prototype.traceParents = function(node) {
     next = next.parent;
   }
   // calls the draw Trace function
-  this.drawTheTrace(this.parentsArray);
-  return this.parentsArray;
+  var result = this.parentsArray;
+  this.drawTheTrace(result);
+  return result;
 };
-
-//searches for a target node from a start node
-Graph.prototype.search = function(start, target) {
-  var currentNode;
-  //loops through all the edges of the current node searching for the target
-  for (var i = 0; i < start.edges.length; i++) {
-    currentNode = start.edges[i];
-    // if target is found add the last node as its parent and call the trace parents to draw the path from the start to the target node
-    if (currentNode.value == target.value) {
-      target.parent = start;
-      var result = this.traceParents(target);
-      console.log(result);
-      return result;
-    } else {
-      //if the current node is not connected to the target we mark is as searched and add the current edge to search queue
-      if (!currentNode.searched) {
-        start.searched = true;
-        this.queue.push(currentNode);
-        currentNode.parent = start;
-      }
+//resets the parents and the searched
+Graph.prototype.reset = function() {
+  this.parentsArray = [];
+  this.queue = [];
+  for (var i = 0; i < this.nodes.length; i++) {
+    this.nodes[i].parent = null;
+    this.nodes[i].searched = false;
+  }
+};
+//prints our search path
+Graph.prototype.drawTheTrace = function(result) {
+  var text = "";
+  //loops through all the nodes we have been through and adds it to a text
+  for (i = result.length - 1; i >= 0; i--) {
+    var node = result[i];
+    text += node.value;
+    if (!i == 0) {
+      text += "-->";
     }
   }
-  //if we searched all the edges and not found any connection return null else search from the start of the queue
-  if (this.queue.length == 0) {
-    console.log("there is no connection");
-    return null;
-  } else {
-    this.search(this.queue.shift(), target);
-  }
+  //a p5 function that draws a paragraph
+  createP(text);
 };
