@@ -1,11 +1,20 @@
 // Implements Craig Reynold's autonomous steering behaviors
 // One vehicle "seeks"
 // See: http://www.red3d.com/cwr/
+
+// a flag to show debugging gui
 var debug;
+
+// array of all the vehicles
 var vehicle = [];
-//array where we keep all the food
+//array where we keep all the food and poison
 var food = [];
 var poison = [];
+
+// add vehicle by draggin mouse
+function mouseDragged() {
+  vehicle.push(new Vehicle(mouseX, mouseY));
+}
 
 function setup() {
   createCanvas(640, 360);
@@ -28,10 +37,7 @@ function setup() {
   }
   debug = createCheckbox();
 }
-// add vehicle by draggin mouse
-function mouseDragged() {
-  vehicle.push(new Vehicle(mouseX, mouseY));
-}
+
 function draw() {
   // frameRate(20);
   background(51);
@@ -41,6 +47,7 @@ function draw() {
     var y = random(height);
     food.push(createVector(x, y));
   }
+
   // a chance each frame to create poison
   if (random(1) < 0.01) {
     var x = random(width);
@@ -61,17 +68,23 @@ function draw() {
     noStroke();
     ellipse(poison[i].x, poison[i].y, 8, 8);
   }
+
   // apply the behavior of each vehicle
   for (var i = vehicle.length - 1; i >= 0; i--) {
+    //  make sure the vehicles dont steer outside the window
     vehicle[i].boundaries();
+    //apply the behavior of the vehicle
     vehicle[i].behaviors(food, poison);
+    // reduces the health each second and updates the location
     vehicle[i].update();
+    // shows the vehicle
     vehicle[i].display();
+    // removes a vehicle from the array and places a food at its position
     if (vehicle[i].dead()) {
-      console.log("dead");
       food.push(createVector(vehicle[i].position.x, vehicle[i].position.y));
       vehicle.splice(i, 1);
     }
+    // reproduces
     if (vehicle[i] != null) var newVehicle = vehicle[i].reproduce();
     if (newVehicle != null) vehicle.push(newVehicle);
   }

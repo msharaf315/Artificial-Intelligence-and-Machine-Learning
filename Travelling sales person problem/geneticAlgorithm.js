@@ -1,24 +1,28 @@
 //  the mutation rate
 var mutationRate = 0.01;
-
+// a counter to keep track of the generation and the generation where we found the best answer
 var generationCounter = 0;
 var foundIn = 0;
-// loop over the population and calculaes their fitness
-// recording the highest fitness
+
+// loop over the population and calculaes their fitness  recording the highest fitness
 function calculateFitness() {
   var currentRecord = Infinity;
+  // loops over the population of random orders and calculates the fitness of each order
   for (var i = 0; i < population.length; i++) {
     var distance = calculateDistance(cities, population[i]);
+    // updates the best order and best distance when found
     if (distance < recordDistance) {
       recordDistance = distance;
       recordPath = population[i];
       foundIn = generationCounter;
       console.log(foundIn);
     }
+    // updates the best order of each generation
     if (distance < currentRecord) {
       currentRecord = distance;
       generationBest = population[i];
     }
+    //calculates the fitness of the current order and stores it
     fitness[i] = (1 / (distance * distance)) ^ 2;
   }
 }

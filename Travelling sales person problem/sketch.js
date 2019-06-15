@@ -1,4 +1,6 @@
+// array storing all the cities
 var cities = [];
+// number of cities
 var totalCities = 12;
 
 //the best order
@@ -8,7 +10,7 @@ var recordPath;
 //best order of the current generation
 var generationBest = [];
 //the population of multiple orders
-var populationSize = 5000;
+var populationSize = 2000;
 var population = [];
 // the fitness of an item of the population
 var fitness = [];
@@ -20,8 +22,7 @@ function swap(array, firstIndex, secondIndex) {
   array[secondIndex] = temp;
 }
 
-// a function that swaps two elemnts in a lexicographic order
-
+// calculates the distance between all cities in a given order
 function calculateDistance(array, order) {
   sum = 0;
   for (var i = 0; i < order.length - 1; i++) {

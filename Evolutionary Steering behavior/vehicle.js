@@ -2,7 +2,9 @@
 mutationRate = 0.01;
 // The "Vehicle" class
 class Vehicle {
+  // the constructor
   constructor(x, y, dna, health) {
+    // the movment vectors
     this.acceleration = createVector(0, 0);
     this.velocity = createVector(0, -2);
     this.position = createVector(x, y);
@@ -46,6 +48,7 @@ class Vehicle {
     }
   }
 
+  // a method that checks if a vehicle is dead
   dead() {
     return this.health < 0 || this.health == 0;
   }
@@ -63,9 +66,10 @@ class Vehicle {
   }
 
   applyForce(force) {
-    // We could add mass here if we want A = F / M
     this.acceleration.add(force);
+    // We could add mass here if we want A = F / M
   }
+
   // calculate the attraction force to poison and applies it
   behaviors(good, bad) {
     var steerGood = this.eat(good, 0.3, this.dna[2]);
@@ -103,7 +107,7 @@ class Vehicle {
     return createVector(0, 0);
   }
 
-  //reproduce
+  //has a random chance of creating a clone of thie current vehicle
   reproduce() {
     if (random(1) < 0.005)
       return new Vehicle(
